@@ -1,0 +1,3 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+"access_external_documents_user","external_documents_user","model_external_documents","base.group_user","1","1","1","1"
+"access_external_documents_type_user","external_documents_type_user","model_external_documents_type","base.group_user","1","1","1","1"

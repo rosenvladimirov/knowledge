@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="ir_attachment_journal_external" model="ir.attachment.journal.template">
+        <field name="code">EXT</field>
+        <field name="name">External journal (Attachments comes from external)</field>
+        <field name="journal_type">external</field>
+        <field name="res_model">external.documents</field>
+<!--        <field name="res_module">knowledge_account_documents</field>-->
+<!--        <field name="res_name">ir_attachment_journal_account</field>-->
+<!--        <field name="sequence_id" ref="knowledge_account_documents.sequence_accounting_attachment_accounts"/>-->
+    </record>
+</odoo>

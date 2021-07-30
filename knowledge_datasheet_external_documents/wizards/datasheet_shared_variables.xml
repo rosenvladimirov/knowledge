@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="wizard_knowledge_cross_datasheets" model="ir.ui.view">
+        <field name="name">Add this attachment to datasheet journal</field>
+        <field name="model">knowledge.cross.datasheets</field>
+        <field name="arch" type="xml">
+            <form string="Datasheet data" >
+                <group name="manufacturer" string="Manufacturer data">
+                    <group>
+                        <field name="ir_attachment_id" invisible="1"/>
+                        <field name="object_id" invisible="1"/>
+                        <field name="partner_id" invisible="1"/>
+                        <field name="force_add_datasheet"/>
+                        <!-- <field name="manufacturer_id" domain="[('product_variant_ids', 'in', [res_id])]"/> -->
+                        <field name="manufacturer_ids" widget="many2many_tags" invisible="context.get('hide_manufacturer')" domain="[('manufacturer', '=', context.get('partner_id'))]"/>
+                        <field name="manufacturer"/>
+                        <field name="version"/>
+                    </group>
+                    <group>
+                        <field name="product_brand_id"/>
+                        <field name="product_tmpl_id"/>
+                        <field name="product_id"/>
+                    </group>
+                </group>
+                <group name="iso" string="Certificate data">
+                    <group>
+                        <field name="iso_number"/>
+                        <field name="date_issue"/>
+                        <field name="is_date"/>
+                        <!-- <field name="notified_body_ids" widget="many2many_tags"/> -->
+                    </group>
+                    <group>
+                        <field name="qc_manager_id"/>
+                        <field name="date_expiry" attrs="{'invisible':[('is_date','=',False)]}"/>
+                        <field name="notified_body_id" context="{'type_company': 1}"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="add_new_datasheet" class="btn-primary" string="Add document" type="object"/>
+                    <button special="cancel" string="Cancel" class="btn-default"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+   <act_window name="Add external document to datasheet journal"
+        res_model="knowledge.cross.datasheets"
+        src_model="external.documents"
+        view_mode="form"
+        target="new"
+        key2="client_action_multi"
+        id="action_knowledge_cross_datasheets"
+        view_id="wizard_knowledge_cross_datasheets"/>
+</odoo>

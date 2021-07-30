@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_attachment_stage_allusers,stage all users,model_attachment_stage,knowledge.group_document_user,1,0,0,0
+access_attachment_stage_manager,stage manager,model_attachment_stage,knowledge.group_document_manager,1,1,1,1
+access_ir_attachment_journal_allusers,ir attachment journal all users,model_ir_attachment_journal,knowledge.group_document_user,1,0,0,0
+access_ir_attachment_journal_manager,ir attachment journal manager,model_ir_attachment_journal,knowledge.group_document_manager,1,1,1,1
+access_ir_attachment_journal_category_allusers,ir attachment journal category all users,model_ir_attachment_journal_category,knowledge.group_document_user,1,0,0,0
+access_ir_attachment_journal_category_manager,ir attachment journal category manager,model_ir_attachment_journal_category,knowledge.group_document_manager,1,1,1,1

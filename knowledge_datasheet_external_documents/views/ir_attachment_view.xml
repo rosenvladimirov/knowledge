@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_datasheets_form" model="ir.ui.view">
+        <field name="name">product.manufacturer.datasheets.form</field>
+        <field name="model">product.manufacturer.datasheets</field>
+        <field name="inherit_id" ref="knowledge_product_datasheets.view_datasheets_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="add_external_documents"
+                        type="object"
+                        string="Add document"
+                        class="btn-primary"
+                        context="{'default_external_document_id': id}"
+                        confirm="are you sure you to add this document to external?"/>
+            </xpath>
+            <xpath expr="//group" position="inside">
+                <group string="Linked External documents" colspan="4">
+                    <field name="external_document_ids" widget="many2many_tags" options="{'open_view': True}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_document_form" model="ir.ui.view">
+        <field name="name">external.documents.form</field>
+        <field name="model">external.documents</field>
+        <field name="inherit_id" ref="knowledge_external_attachment.view_document_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="id" invisible="1"/>
+                <button name="%(action_knowledge_cross_datasheets)d"
+                        type="action"
+                        string="Add datasheet"
+                        class="btn-primary"
+                        context="{'default_external_document_id': id}"/>
+            </xpath>
+            <xpath expr="//group" position="inside">
+                <group string="Linked Datasheets" colspan="4">
+                    <group>
+                        <field name="datasheet_ids" widget="many2many_tags" options="{'open_view': True}"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

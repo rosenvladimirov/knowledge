@@ -3,3 +3,7 @@
 
 from . import ir_attachment
 from . import res_config
+from . import attachment_stage
+from . import ir_attachment_dashboard
+from . import ir_actions_report
+

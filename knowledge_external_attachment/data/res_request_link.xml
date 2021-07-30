@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Request link -->
+        <record id="req_link_crm_leads" model="res.request.link">
+            <field name="name">Leads</field>
+            <field name="object">crm.lead</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_document_form" model="ir.ui.view">
+        <field name="name">account.documents.form</field>
+        <field name="model">account.documents</field>
+        <field name="inherit_id" ref="knowledge_account_documents.view_document_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="add_external_document"
+                        type="object"
+                        string="Add document"
+                        class="btn-primary"
+                        context="{'default_external_document_id': id}"
+                        confirm="are you sure you to add this document to external?"/>
+            </xpath>
+            <xpath expr="//group" position="inside">
+                <group string="External document data" colspan="4">
+                    <field name="external_document_ids" widget="many2many_tags" options="{'open_view': True}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_document_account_group_form" model="ir.ui.view">
+        <field name="name">external.documents.form</field>
+        <field name="model">external.documents</field>
+        <field name="inherit_id" ref="knowledge_external_attachment.view_document_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="id" invisible="1"/>
+                <button name="%(action_knowledge_cross_accounts)d"
+                        type="action"
+                        string="Add document"
+                        class="btn-primary"
+                        context="{'default_external_document_id': id}"/>
+            </xpath>
+            <xpath expr="//group" position="inside">
+                <group string="Account document data" colspan="4">
+                    <field name="document_ids" widget="many2many_tags" options="{'open_view': True}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,103 @@
+<odoo>
+    <record id="account_ir_attachment_dashboard_kanban_view" model="ir.ui.view">
+        <field name="name">ir.attachment.journal.dashboard.kanban</field>
+        <field name="model">ir.attachment.journal</field>
+        <field name="arch" type="xml">
+            <kanban create="false" class="oe_background_grey o_kanban_dashboard o_attachment_kanban o_attachment_kanban">
+                <field name="id"/>
+                <field name="journal_type"/>
+                <field name="color"/>
+                <field name="show_on_dashboard"/>
+                <field name="kanban_dashboard"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="#{kanban_color(record.color.raw_value)}">
+                            <t t-value="JSON.parse(record.kanban_dashboard.raw_value)" t-set="dashboard"/>
+                            <t t-value="record.journal_type.raw_value" t-set="attachment_journal_type"/>
+                            <t t-call="AttachmentJournalTop"/>
+                            <div class="container o_kanban_card_content">
+                                <div class="row" name="dashboard_view">
+                                    <div class="col-xs-6 o_kanban_primary_left">
+                                        <button type="object" name="open_action" context="{'action_name': 'knowledge_action_documents', 'view_no_maturity': 1}" class="btn btn-primary btn-sm">
+                                            <span>Attachment documents</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="container o_kanban_card_manage_pane">
+                                <t t-call="AttachmentJournalManage"/>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-name="AttachmentJournalTop">
+                        <div t-attf-class="o_kanban_card_header">
+                            <div class="o_kanban_card_header_title">
+                                <div class="o_primary">
+                                    <a type="object" name="open_action"><field name="name"/></a>
+                                </div>
+                                <div class="o_secondary" t-att-title="dashboard.title">
+                                    <field name="journal_type"/>
+                                </div>
+                            </div>
+                            <div class="o_kanban_manage_button_section">
+                                <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v" /></a>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-name="AttachmentJournalManage">
+                        <div class="row">
+                            <div class="col-xs-4 o_kanban_card_manage_section o_kanban_manage_view" name="action_create_view">
+                                <div class="o_kanban_card_manage_title">
+                                    <span>View</span>
+                                </div>
+                                <div>
+                                    <a type="object" name="open_action">All Documents</a>
+                                </div>
+                            </div>
+                            <div class="col-xs-4 o_kanban_card_manage_section o_kanban_manage_new" name="action_create_new">
+                                <div class="o_kanban_card_manage_title">
+                                    <span>New</span>
+                                </div>
+                                <div>
+                                    <a type="object" name="open_action" context="{'use_domain': [('direction', '=', 'none')]}">
+                                        <span>New Document</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div t-if="widget.editable" class="o_kanban_card_manage_settings row">
+                                <div class="col-xs-8">
+                                    <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="open_attachment_dashboard_kanban" model="ir.actions.act_window">
+        <field name="name">Knowledge Dashboard</field>
+        <field name="res_model">ir.attachment.journal</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="view_id" ref="account_ir_attachment_dashboard_kanban_view"/>
+        <field name="usage">menu</field>
+        <field name="domain">[('belongs_to_company', '=', True)]</field>
+        <field name="help" type="html">
+            <p>
+                This is the Knowledge dashboard. If you have not yet
+                start to work with documents first.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_board_knowledge"
+              name="Dashboard"
+              action="open_attachment_dashboard_kanban"
+              parent="menu_document_root"
+              sequence="1"
+              groups="knowledge.group_document_user"/>
+</odoo>

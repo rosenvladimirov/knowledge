@@ -1,0 +1,3 @@
+-
+    !python {model: ir.attachment.journal.template, id: ir_attachment_journal_account}: |
+        self[0].try_attach_companies()

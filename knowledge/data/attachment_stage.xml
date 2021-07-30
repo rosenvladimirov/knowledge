@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="knowledge_system_state_draft" model="attachment.stage">
+        <field name="name">Draft</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="knowledge_system_state_active" model="attachment.stage">
+        <field name="name">Check before send</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="knowledge_system_state_receive" model="attachment.stage">
+        <field name="name">Check after receive</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="knowledge_system_state_send" model="attachment.stage">
+        <field name="name">Check before send</field>
+        <field name="sequence">40</field>
+    </record>
+
+    <record id="knowledge_system_state_send_receive" model="attachment.stage">
+        <field name="name">Sent/Receive</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <record id="knowledge_system_state_archived" model="attachment.stage">
+        <field name="name">Archived</field>
+        <field name="sequence">90</field>
+    </record>
+
+    <record id="knowledge_system_state_cancelled" model="attachment.stage">
+        <field name="name">Cancelled</field>
+        <field name="sequence">100</field>
+        <field name="fold">True</field>
+    </record>
+</odoo>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Files -->
+    <record id="account_documents.view_account_documents_tree" model="ir.ui.view">
+        <field name="name">account.documents.tree</field>
+        <field name="model">account.documents</field>
+        <field name="arch" type="xml">
+            <tree string="Accounts Documents">
+                <field name="document_type_id"/>
+                <field name="name"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+<!--                <field name="stage_id"/>-->
+            </tree>
+        </field>
+    </record>
+    <record id="view_account_documents_tree" model="ir.ui.view">
+        <field name="name">account.documents.tree</field>
+        <field name="model">account.documents</field>
+        <field name="inherit_id" ref="account_documents.view_account_documents_tree"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="after">
+                <field name="stage_id"/>
+            </field>
+        </field>
+    </record>
+    <record id="view_account_documents_search_form" model="ir.ui.view">
+        <field name="name">account.documents.search.form</field>
+        <field name="model">account.documents</field>
+        <field name="arch" type="xml">
+            <search string="Tasks">
+                <field name="name" string="Reference"/>
+                <field name="document_type_id"/>
+                <field name="stage_id"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Document type" name="document_type" context="{'group_by':'document_type_id'}"/>
+                    <filter string="Stage" name="Stage" context="{'group_by':'stage_id'}"/>
+                    <filter string="Company" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="view_documents_file_kanban_account" model="ir.ui.view" >
+        <field name="name">account.documents.kanban</field>
+        <field name="model">account.documents</field>
+        <field name="inherit_id" ref="account_documents.view_documents_file_kanban_account"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="default_group_by">stage_id</attribute>
+                <attribute name="group_create">false</attribute>
+                <attribute name="group_delete">false</attribute>
+<!--                <attribute name="class">o_kanban_small_column</attribute>-->
+            </xpath>
+            <field name="ir_attachment_id" position="before">
+                <field name="stage_id" options='{"group_by_tooltip": {"requirements": "Description"}}'/>
+            </field>
+        </field>
+    </record>
+    <record id="view_document_form" model="ir.ui.view">
+        <field name="name">account.documents.form</field>
+        <field name="model">account.documents</field>
+        <field name="inherit_id" ref="account_documents.view_document_form"/>
+        <field name="arch" type="xml">
+            <sheet position="before">
+                <header>
+                    <field name="stage_id" widget="statusbar" clickable="True"
+                        options="{'fold_field': 'fold'}"/>
+                </header>
+            </sheet>
+            <xpath expr="//group/group" position="after">
+                <group>
+                    <field name="direction"/>
+                    <field name="attachment_journal_id" invisible="1"/>
+                    <field name="categ_id"/>
+                    <field name="ref"/>
+                    <field name="object_id"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+    <record id="knowledge_action_account_documents" model="ir.actions.act_window">
+        <field name="name">Documents</field>
+        <field name="res_model">account.documents</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'sequence': 2, 'view_mode': 'tree', 'view_id': ref('account_documents.view_account_documents_tree')}),
+            (0, 0, {'sequence': 1, 'view_mode': 'kanban', 'view_id': ref('account_documents.view_documents_file_kanban_account')}),
+            (0, 0, {'sequence': 3, 'view_mode': 'form', 'view_id': ref('account_documents.view_document_form')})]"/>
+        <field name="search_view_id" ref="view_account_documents_search_form"/>
+        <field name="context">{'default_attachment_journal_id': active_id}</field>
+    </record>
+</odoo>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ir_attachment_journal_template_tree" model="ir.ui.view">
+        <field name="name">ir.attachment.journal.template.tree</field>
+        <field name="model">ir.attachment.journal.template</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <tree string="Attachment Journal">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="journal_type"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_ir_attachment_journal_template_search" model="ir.ui.view">
+        <field name="name">ir.attachment.journal.template.search</field>
+        <field name="model">ir.attachment.journal.template</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <search string="Search Attachment Journal">
+                <field name="name" filter_domain="['|', ('name','ilike',self), ('code','ilike',self)]" string="Attachment Journal"/>
+                <filter domain="[('journal_type', '=', 'standard')]" string="Standard: all documents"/>
+            </search>
+        </field>
+    </record>
+    <record id="view_ir_attachment_journal_template_form" model="ir.ui.view">
+        <field name="name">ir.attachment.journal.template.form</field>
+        <field name="model">ir.attachment.journal.template</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form string="Attachment Journal">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1><field name="name" class="oe_inline"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="journal_type"/>
+                            <field name="code"/>
+                            <field name="res_model" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_attachment_journal_template_form" model="ir.actions.act_window">
+        <field name="name">Attachment Journals Template</field>
+        <field name="res_model">ir.attachment.journal.template</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ir_attachment_journal_template_tree')}),
+            (0, 0, {'view_mode': 'kanban', 'view_id': False}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_ir_attachment_journal_template_form')})]"/>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add a Attachment journal template.
+          </p>
+        </field>
+    </record>
+    <menuitem action="action_attachment_journal_template_form"
+              id="menu_action_attachment_journal_template_form"
+              parent="menu_document_configuration"
+              groups="knowledge.group_document_user"/>
+</odoo>

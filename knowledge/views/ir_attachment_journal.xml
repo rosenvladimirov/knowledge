@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ir_attachment_journal_tree" model="ir.ui.view">
+        <field name="name">ir.attachment.journal.tree</field>
+        <field name="model">ir.attachment.journal</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <tree string="Attachment Journal">
+                <field name='sequence' widget='handle'/>
+                <field name="name"/>
+                <field name="journal_type"/>
+                <field name="belongs_to_company" invisible="1"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+    <record id="ir_attachment_journal_view_kanban" model="ir.ui.view">
+        <field name="name">ir.attachment.journal.kanban</field>
+        <field name="model">ir.attachment.journal</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_content oe_kanban_global_click">
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <strong><field name="name"/></strong>
+                                </div>
+                                <div class="col-xs-6">
+                                    <span class="pull-right"><field name="journal_type"/></span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <record id="view_ir_attachment_journal_search" model="ir.ui.view">
+        <field name="name">ir.attachment.journal.search</field>
+        <field name="model">ir.attachment.journal</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <search string="Search Attachment Journal">
+                <field name="name" filter_domain="['|', ('name','ilike',self), ('code','ilike',self)]" string="Attachment Journal"/>
+                <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
+                <filter domain="[('journal_type', '=', 'standard')]" string="Standard: all documents"/>
+                <filter name="dashboard" string="Favorites" domain="[('show_on_dashboard', '=', True)]"/>
+            </search>
+        </field>
+    </record>
+    <record id="view_ir_attachment_journal_form" model="ir.ui.view">
+        <field name="name">ir.attachment.journal.form</field>
+        <field name="model">ir.attachment.journal</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form string="Attachment Journal">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="toggle_active" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1><field name="name" class="oe_inline"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="journal_type"/>
+                            <field name="attachment_name"/>
+                            <field name="attachment_file"/>
+                            <field name="attachment_root_path"/>
+                            <field name="attachment_path"/>
+                        </group>
+                        <group>
+                            <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="journal_entries" string="Attachment Journal Entries">
+                            <group>
+                                <group>
+                                    <field name="code"/>
+                                    <field name="sequence_id" required="0"
+                                               attrs="{'readonly': 1}" groups="base.group_no_one"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page name="advanced_settings" string="Advanced Settings">
+                            <group>
+                                <group>
+                                    <field name="res_model" readonly="1"/>
+                                    <field name="show_on_dashboard"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_attachment_journal_form" model="ir.actions.act_window">
+        <field name="name">Attachment Journals</field>
+        <field name="res_model">ir.attachment.journal</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ir_attachment_journal_tree')}),
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('ir_attachment_journal_view_kanban')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_ir_attachment_journal_form')})]"/>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add a Attachment journal.
+          </p><p>
+            A Attachment Journal is used to organise The Attachment files
+            related to the day-to-day business.
+          </p><p>
+            A typical company may use one Attachment Journal per income and outcome documents and one for Bookkeeping documents.
+          </p>
+        </field>
+    </record>
+    <menuitem action="action_attachment_journal_form"
+              id="menu_action_attachment_journal_form"
+              parent="menu_document_configuration"
+              groups="knowledge.group_document_user"/>
+</odoo>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="wizard_knowledge_cloud_base_external" model="ir.ui.view">
+        <field name="name">Share this attachment with users</field>
+        <field name="model">knowledge.cloud.base.external</field>
+        <field name="arch" type="xml">
+            <form string="Datasheet data" >
+                <group>
+                    <field name="ir_attachment_id" invisible="1"/>
+                    <field name="users" widget="many2many_tags" domain="[('cloud_user', '!=', False)]"/>
+                </group>
+                <footer>
+                    <button name="share_with_user_external" class="btn-primary" string="Share document" type="object"/>
+                    <button special="cancel" string="Cancel" class="btn-default"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+   <act_window name="Share external document with users"
+        res_model="knowledge.cloud.base.external"
+        src_model="external.documents"
+        view_mode="form"
+        target="new"
+        key2="client_action_multi"
+        id="action_knowledge_cloud_base_external"
+        view_id="wizard_knowledge_cloud_base_external"/>
+</odoo>

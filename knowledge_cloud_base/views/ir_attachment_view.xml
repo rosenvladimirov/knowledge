@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_document_form" model="ir.ui.view">
+        <field name="name">account.documents.form</field>
+        <field name="model">account.documents</field>
+        <field name="inherit_id" ref="knowledge_account_documents.view_document_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="restore_attachment_from_cloud"
+                        type="object"
+                        string="Restore from cloud"
+                        class="btn-primary"
+                        confirm="are you sure you to restore from cloud?"
+                        attrs="{'invisible': [('type', '=', 'binary')]}"
+                />
+                <button name="share_attachment_from_cloud"
+                        type="object"
+                        string="Share from cloud"
+                        class="btn-primary"
+                        confirm="are you sure to share file from cloud?"
+                        attrs="{'invisible': [('url_cloud_public', '!=', False)]}"
+                />
+                <button name="un_share_attachment_from_cloud"
+                        type="object"
+                        string="UNShare from cloud"
+                        class="btn-primary"
+                        confirm="are you sure to share file from cloud?"
+                        attrs="{'invisible': [('url_cloud_public', '=', False)]}"
+                />
+                <button name="%(action_knowledge_cloud_base_account)d"
+                        type="action"
+                        string="Share with cloud users"
+                        class="btn-primary"
+                        context="{'default_external_document_id': id}"
+                        attrs="{'invisible': [('type', '=', 'binary')]}"
+                />
+            </xpath>
+            <xpath expr="//field[@name='mimetype']" position="after">
+                <field name="url_cloud_public" widget="url" readonly="1" attrs="{'invisible': [('url_cloud_public', '=', False)]}"/>
+                <field name="url_cloud_public_id" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_document_account_group_form" model="ir.ui.view">
+        <field name="name">external.documents.form</field>
+        <field name="model">external.documents</field>
+        <field name="inherit_id" ref="knowledge_external_attachment.view_document_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="restore_attachment_from_cloud"
+                        type="object"
+                        string="Restore from cloud"
+                        class="btn-primary"
+                        confirm="are you sure to restore from cloud?"
+                        attrs="{'invisible': [('type', '=', 'binary')]}"
+                />
+                <button name="share_attachment_from_cloud"
+                        type="object"
+                        string="Share from cloud"
+                        class="btn-primary"
+                        confirm="are you sure to share file from cloud?"
+                        attrs="{'invisible': [('url_cloud_public', '!=', False)]}"
+                />
+                <button name="un_share_attachment_from_cloud"
+                        type="object"
+                        string="UNShare from cloud"
+                        class="btn-primary"
+                        confirm="are you sure to share file from cloud?"
+                        attrs="{'invisible': [('url_cloud_public', '=', False)]}"
+                />
+                <button name="%(action_knowledge_cloud_base_external)d"
+                        type="action"
+                        string="Share with cloud users"
+                        class="btn-primary"
+                        context="{'default_external_document_id': id}"
+                        attrs="{'invisible': [('type', '=', 'binary')]}"
+                />
+                <button name="%(action_knowledge_cloud_base_cloud)d"
+                        type="action"
+                        string="Get cloud attachment"
+                        class="btn-primary"
+                        context="{'default_external_document_id': id}"
+                        attrs="{'invisible': [('type', '=', 'binary')]}"
+                />
+            </xpath>
+            <xpath expr="//field[@name='mimetype']" position="after">
+                <field name="url_cloud_public" widget="url" readonly="1" attrs="{'invisible': [('url_cloud_public', '=', False)]}"/>
+                <field name="url_cloud_public_id" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

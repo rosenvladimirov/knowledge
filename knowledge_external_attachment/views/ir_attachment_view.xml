@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_external_documents_tree" model="ir.ui.view">
+        <field name="name">external.documents.tree</field>
+        <field name="model">external.documents</field>
+        <field name="inherit_id" ref="external_documents.view_external_documents_tree"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="after">
+                <field name="stage_id"/>
+            </field>
+        </field>
+    </record>
+    <record id="view_external_documents_search_form" model="ir.ui.view">
+        <field name="name">external.documents.search.form</field>
+        <field name="model">external.documents</field>
+        <field name="arch" type="xml">
+            <search string="Tasks">
+                <field name="name" string="Tasks"/>
+                <field name="partner_id"/>
+                <field name="stage_id"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Partner" name="partner_group" context="{'group_by':'partner_id'}"/>
+                    <filter string="Stage" name="Stage" context="{'group_by':'stage_id'}"/>
+                    <filter string="Company" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="view_documents_file_kanban_external" model="ir.ui.view" >
+        <field name="name">external.documents.kanban</field>
+        <field name="model">external.documents</field>
+        <field name="inherit_id" ref="external_documents.view_documents_file_kanban_external"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="default_group_by">stage_id</attribute>
+                <attribute name="group_create">false</attribute>
+                <attribute name="group_delete">false</attribute>
+<!--                <attribute name="class">o_kanban_small_column</attribute>-->
+            </xpath>
+            <field name="ir_attachment_id" position="before">
+                <field name="stage_id" options='{"group_by_tooltip": {"requirements": "Description"}}'/>
+            </field>
+        </field>
+    </record>
+    <!-- Files -->
+    <record id="view_document_form" model="ir.ui.view">
+        <field name="name">external.documents.form</field>
+        <field name="model">external.documents</field>
+        <field name="inherit_id" ref="external_documents.view_document_form"/>
+        <field name="arch" type="xml">
+            <sheet position="before">
+                <header>
+                    <field name="stage_id" widget="statusbar" clickable="True"
+                        options="{'fold_field': 'fold'}"/>
+                </header>
+            </sheet>
+            <xpath expr="//field[@name='contact_partner_id']" position="after">
+                <field name="use_leads"/>
+                <field name="lead_name"/>
+            </xpath>
+            <xpath expr="//group/group" position="after">
+                <group>
+                    <field name="direction"/>
+                    <field name="attachment_journal_id" invisible="1"/>
+                    <field name="categ_id"/>
+                    <field name="ref"/>
+                    <field name="object_id"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+    <record id="external_documents.knowledge_action_external_documents" model="ir.actions.act_window">
+        <field name="name">External Documents</field>
+        <field name="res_model">external.documents</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="views">[[False, "kanban"], [False, "tree"], [False, "form"]]</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'sequence': 2, 'view_mode': 'tree', 'view_id': ref('external_documents.view_external_documents_tree')}),
+            (0, 0, {'sequence': 1, 'view_mode': 'kanban', 'view_id': ref('external_documents.view_documents_file_kanban_external')}),
+            (0, 0, {'sequence': 3, 'view_mode': 'form', 'view_id': ref('external_documents.view_document_form')})]"/>
+        <field name="search_view_id" ref="view_external_documents_search_form"/>
+        <field name="context">{'default_attachment_journal_id': active_id}</field>
+    </record>
+</odoo>

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="ir_attachment_journal_datasheet" model="ir.attachment.journal.template">
+        <field name="code">DS</field>
+        <field name="name">Datasheet Documents (all attachments from datasheets)</field>
+        <field name="journal_type">datasheets</field>
+        <field name="res_model">product.manufacturer.datasheets</field>
+<!--        <field name="sequence_id" ref="knowledge_product_datasheets.sequence_datasheet_attachment_datasheet"/>-->
+    </record>
+</odoo>

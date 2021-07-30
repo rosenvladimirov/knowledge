@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Files -->
+    <record id="view_product_manufacturer_datasheets_tree" model="ir.ui.view">
+        <field name="name">product.manufacturer.datasheets.tree</field>
+        <field name="model">product.manufacturer.datasheets</field>
+        <field name="arch" type="xml">
+            <tree string="Product Manufacturer">
+                <field name="iso_number"/>
+                <field name="date_issue"/>
+                <field name="date_expiry"/>
+                <field name="qc_manager_id"/>
+                <field name="name" />
+                <field name="datas_fname"/>
+                <field name="manufacturer_id"/>
+                <field name="product_brand_id"/>
+                <field name="version"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_datasheets_file_kanban_properties" model="ir.ui.view" >
+        <field name="name">product.manufacturer.datasheets.kanban</field>
+        <field name="model">product.manufacturer.datasheets</field>
+        <field name="inherit_id" ref="product_properties.view_datasheets_file_kanban_properties"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="default_group_by">stage_id</attribute>
+                <attribute name="group_create">false</attribute>
+                <attribute name="group_delete">false</attribute>
+<!--                <attribute name="class">o_kanban_small_column</attribute>-->
+            </xpath>
+            <field name="ir_attachment_id" position="before">
+                <field name="stage_id" options='{"group_by_tooltip": {"requirements": "Description"}}'/>
+            </field>
+        </field>
+    </record>
+    <record id="view_product_manufacturer_datasheets_eazy_kanban" model="ir.ui.view">
+        <field name="name">product.manufacturer.datasheets.kanban</field>
+        <field name="model">product.manufacturer.datasheets</field>
+        <field name="inherit_id" ref="product_properties.view_product_manufacturer_datasheets_eazy_kanban"/>
+        <field eval="1" name="priority"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="default_group_by">stage_id</attribute>
+                <attribute name="group_create">false</attribute>
+                <attribute name="group_delete">false</attribute>
+<!--                <attribute name="class">o_kanban_small_column</attribute>-->
+            </xpath>
+            <field name="ir_attachment_id" position="before">
+                <field name="stage_id" options='{"group_by_tooltip": {"requirements": "Description"}}'/>
+            </field>
+        </field>
+    </record>
+    <record id="product_manufacturer_datasheets_search_view" model="ir.ui.view">
+        <field name="name">product.manufacturer.datasheets.search.view</field>
+        <field name="model">product.manufacturer.datasheets</field>
+        <field name="inherit_id" ref="product_properties.product_manufacturer_datasheets_search_view"/>
+        <field name="arch" type="xml">
+            <field name="manufacturer" position="after">
+                <field name="stage_id"/>
+                <separator/>
+                <filter string="Expired" name="date_expiry" domain="[('date_expiry', '&lt;=', time.strftime('%Y-%m-%d'))]"/>
+            </field>
+        </field>
+    </record>
+    <record id="view_datasheets_form" model="ir.ui.view">
+        <field name="name">product.manufacturer.datasheets.form</field>
+        <field name="model">product.manufacturer.datasheets</field>
+        <field name="inherit_id" ref="product_properties.view_datasheets_form"/>
+        <field name="arch" type="xml">
+            <sheet position="before">
+                <header>
+                    <field name="stage_id" widget="statusbar" clickable="True"
+                        options="{'fold_field': 'fold'}"/>
+                </header>
+            </sheet>
+            <xpath expr="//group/group" position="after">
+                <group>
+                    <field name="direction" invisible="1"/>
+                    <field name="attachment_journal_id" invisible="1"/>
+                    <field name="categ_id"/>
+                    <field name="ref"/>
+                    <field name="object_id"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+    <record id="knowledge_action_datasheet_documents" model="ir.actions.act_window">
+        <field name="name">Manufacturer Datasheets</field>
+        <field name="res_model">product.manufacturer.datasheets</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'sequence': 2, 'view_mode': 'tree', 'view_id': ref('view_product_manufacturer_datasheets_tree')}),
+            (0, 0, {'sequence': 1, 'view_mode': 'kanban', 'view_id': ref('product_properties.view_datasheets_file_kanban_properties')}),
+            (0, 0, {'sequence': 3, 'view_mode': 'form', 'view_id': ref('product_properties.view_datasheets_form')})]"/>
+        <field name="search_view_id" ref="product_properties.product_manufacturer_datasheets_search_view"/>
+        <field name="context">{'default_attachment_journal_id': active_id}</field>
+    </record>
+</odoo>

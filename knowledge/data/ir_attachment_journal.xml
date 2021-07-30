@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="ir_attachment_journal_standard" model="ir.attachment.journal.template">
+        <field name="code">STD</field>
+        <field name="name">Standard journal (all attachments)</field>
+        <field name="journal_type">standard</field>
+        <field name="res_model">ir.attachment</field>
+<!--        <field name="res_module">knowledge</field>-->
+<!--        <field name="res_name">ir_attachment_journal_standard</field>-->
+<!--        <field name="sequence_id" ref="knowledge.sequence_attachment_journal"/>-->
+    </record>
+</odoo>

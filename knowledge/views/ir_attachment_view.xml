@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Attachment -->
+    <record id="view_attachment_form_ref" model="ir.ui.view">
+        <field name="name">Adding a field ref</field>
+        <field name="model">ir.attachment</field>
+        <field name="inherit_id" ref="base.view_attachment_form"/>
+        <field name="arch" type="xml">
+            <sheet position="before">
+                <header>
+                    <field name="stage_id" widget="statusbar" clickable="True"
+                        options="{'fold_field': 'fold'}"/>
+                </header>
+            </sheet>
+            <xpath expr="//group/group" position="after">
+                <group>
+                    <field name="ref"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

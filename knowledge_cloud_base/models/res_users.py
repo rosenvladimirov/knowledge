@@ -11,9 +11,9 @@ class User(models.Model):
     cloud_user = fields.Char('Cloud user')
 
     def __init__(self, pool, cr):
+        super(User, self).__init__(pool, cr)
         cr.execute("SELECT column_name FROM information_schema.columns "
                    "WHERE table_name = 'res_users' AND column_name = 'cloud_user'")
         if not cr.fetchone():
             cr.execute('ALTER TABLE res_users '
                        'ADD COLUMN cloud_user character varying;')
-        return super(User, self).__init__(pool, cr)

@@ -29,7 +29,7 @@ class IrAttachmentJournalCategory(models.Model):
     attachment_count = fields.Integer(
         '# Attachment files', compute='_compute_attachment_count',
         help="The number of attachment under this category (Does not consider the children categories)")
-    display_name = fields.Char('Name', compute='_compute_dispay_name')
+    display_name = fields.Char('Name', compute='_compute_display_name')
 
     @api.depends('name', 'parent_id.complete_name')
     def _compute_complete_name(self):
@@ -39,7 +39,7 @@ class IrAttachmentJournalCategory(models.Model):
             else:
                 category.complete_name = category.name
 
-    def _compute_dispay_name(self):
+    def _compute_dislpay_name(self):
         for category in self:
             category.display_name = category.name
 

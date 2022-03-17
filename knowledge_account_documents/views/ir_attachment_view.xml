@@ -78,7 +78,7 @@
             </xpath>
         </field>
     </record>
-    <record id="knowledge_action_account_documents" model="ir.actions.act_window">
+    <record id="account_documents.knowledge_action_account_documents" model="ir.actions.act_window">
         <field name="name">Documents</field>
         <field name="res_model">account.documents</field>
         <field name="view_mode">kanban,tree,form</field>

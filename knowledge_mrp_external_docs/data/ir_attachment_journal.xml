@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="ir_attachment_journal_mrp" model="ir.attachment.journal.template">
+        <field name="code">MRP</field>
+        <field name="name">MRP technical documents journal (Attachments comes from mrp routing)</field>
+        <field name="journal_type">mrp</field>
+        <field name="res_model">mrp.technical.documents</field>
+    </record>
+</odoo>

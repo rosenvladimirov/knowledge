@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Request link -->
+        <record id="req_link_mrp_routing_workcenter" model="res.request.link">
+            <field name="name">Work order operation</field>
+            <field name="object">mrp.routing.workcenter</field>
+        </record>
+    </data>
+</odoo>

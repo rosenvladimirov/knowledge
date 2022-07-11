@@ -119,11 +119,17 @@ class AccountDocuments(models.Model):
     @api.onchange('document_type_id', 'categ_id', 'datas')
     def _onchange_name(self):
         for record in self:
-            # _logger.info("UPDATE %s:%s:%s:%s" % (record.document_type_id, record.categ_id, record.document_type_id, record.attachment_journal_id))
+            # _logger.info("UPDATE %s:%s:%s:%s" % (record.document_type_id, record.categ_id, record.document_type_id,
+            # record.attachment_journal_id))
             if record.document_type_id and record.categ_id and record.attachment_journal_id and not record.name:
                 try:
-                    record.name = safe_eval(record.attachment_journal_id.attachment_name,
-                                            {'object': record, 'time': time})
+                    name = safe_eval(record.attachment_journal_id.attachment_name, {'object': record, 'time': time})
+                    if name.rfind('.') >= 0:
+                        name, ext = name.rsplit('.', 1)
+                    else:
+                        ext = ''
+                    name = "%s%s" % (name.strip(), ".%s" % ext)
+                    record.name = name
                 except ValueError:
                     _logger.info("Cannot adapt name...")
 
@@ -144,7 +150,17 @@ class IrActionsReport(models.Model):
                                                                           limit=1)
         if attachment_journal and attachment_journal.attachment_name and attachment_journal.attachment_file:
             attachment_name = safe_eval(attachment_journal.attachment_name, {'object': record, 'time': time})
+            if attachment_name.rfind('.') >= 0:
+                attachment_name, ext = attachment_name.rsplit('.', 1)
+            else:
+                ext = ''
+            attachment_name = "%s%s" % (attachment_name.strip(), ".%s" % ext)
             attachment_file = safe_eval(attachment_journal.attachment_file, {'object': record, 'time': time})
+            if attachment_file.rfind('.') >= 0:
+                attachment_file, ext = attachment_file.rsplit('.', 1)
+            else:
+                ext = ''
+            attachment_file = "%s%s" % (attachment_file.strip(), ".%s" % ext)
             _logger.info("NAME %s" % attachment_name)
             res.update({
                 'attachment_name': attachment_name,

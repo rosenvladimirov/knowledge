@@ -14,7 +14,7 @@ class AttachmentStage(models.Model):
     description = fields.Text(string="Description", required=False)
     sequence = fields.Integer(string="Sequence", default="1", required=False)
     fold = fields.Boolean(string="Is Folded", required=False,
-                          help="This stage is folded in the kanban view by deafault.")
+                          help="This stage is folded in the kanban view by default.")
 
     @api.multi
     def unlink(self):

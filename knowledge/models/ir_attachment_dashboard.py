@@ -6,6 +6,7 @@ from odoo import models, api, _, fields
 from odoo.exceptions import ValidationError
 
 import logging
+
 _logger = logging.getLogger(__name__)
 
 
@@ -44,7 +45,8 @@ class IrAttachmentJournalCategory(models.Model):
             category.display_name = category.name
 
     def _compute_attachment_count(self):
-        read_group_res = self.env['ir.attachment'].read_group([('categ_id', 'child_of', self.ids)], ['categ_id'], ['categ_id'])
+        read_group_res = self.env['ir.attachment'].read_group([('categ_id', 'child_of', self.ids)], ['categ_id'],
+                                                              ['categ_id'])
         group_data = dict((data['categ_id'][0], data['categ_id_count']) for data in read_group_res)
         for categ in self:
             attachment_count = 0
@@ -73,6 +75,7 @@ class IrAttachmentJournalTemplate(models.Model):
     journal_type = fields.Selection([('standard', 'Standard Attachment Journal')], string="Attachment Journal name",
                                     default="standard")
     res_model = fields.Char('Resource model')
+
     # res_module = fields.Char('Resource module')
     # res_name = fields.Char('Resource id')
 
@@ -121,7 +124,7 @@ class IrAttachmentJournalTemplate(models.Model):
                     }
                     new_xml_id = str(company.id) + '_' + res_id
                     ir_model_data._update(model, res_module, vals, xml_id=new_xml_id, store=True,
-                                                 noupdate=True, mode='init', res_id=False)
+                                          noupdate=True, mode='init', res_id=False)
 
 
 class IrAttachmentJournal(models.Model):
@@ -158,14 +161,15 @@ class IrAttachmentJournal(models.Model):
     attachment_name = fields.Text(string='Template Name', required=False,
                                   help="For attachment store, name of the template used in the naming.")
     attachment_file = fields.Text(string='Attachment File Name', required=False, readonly=False, store=True,
-                                  help="The path to the main attachment file (depending on attachment Type) or empty if "
-                                       "the content is in another field")
+                                  help="The path to the main attachment file (depending on attachment Type) or empty "
+                                       "if the content is in another field")
     attachment_path = fields.Text(string='Attachment Path Name', required=False, readonly=False, store=True,
-                                  help="The path to the main attachment file (depending on attachment Type) or empty if "
-                                       "the content is in another field")
+                                  help="The path to the main attachment file (depending on attachment Type) or empty "
+                                       "if the content is in another field")
     attachment_root_path = fields.Text(string='Attachment Root Path Name', required=False, readonly=False, store=True,
-                                  help="The path to the main attachment file (depending on attachment Type) or empty if "
-                                       "the content is in another field")
+                                       help="The path to the main attachment file (depending on attachment Type) or "
+                                            "empty if the content is in another field")
+
     @api.multi
     @api.depends('company_id')
     def _belong_to_company(self):

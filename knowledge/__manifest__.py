@@ -16,6 +16,7 @@
     "depends": [
         "base",
         "document",
+        "queue_job",
     ],
     "data": [
         # "data/knowledge_data.xml", remove the sequence move to create inside

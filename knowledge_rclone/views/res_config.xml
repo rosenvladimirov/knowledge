@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_knowledge_configuration" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.knowledge</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="knowledge.view_knowledge_configuration"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@data-key='knowledge']" position="inside">
+                <h2>Connect with rclone</h2>
+                <div class="row mt16 o_settings_container" id="nextcloud_setting">
+                    <div class="col-xs-6 col-md-6 o_setting_box">
+                        <div class="o_setting_left_pane">
+                            <field name="use_rmount"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="use_rmount"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-md-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <label for="rclone_basic_root"/>
+                            <field name="rclone_basic_root"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-md-6 o_setting_box" attrs="{'invisible': [('use_rmount','=',True)]}">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Fill data for shared user and password and url to connect with nextcloud server
+                            </div>
+                            <label for="rclone_url"/>
+                            <field name="rclone_url" widget="url"/>
+                            <label for="rclone_port"/>
+                            <field name="rclone_port"/>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-md-6 o_setting_box" attrs="{'invisible': [('use_davfs2','=',True)]}">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <label for="rclone_user"/>
+                            <field name="rclone_user"/>
+                            <label for="rclone_password"/>
+                            <field name="rclone_password" password="True"/>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -55,10 +55,10 @@
                         options="{'fold_field': 'fold'}"/>
                 </header>
             </sheet>
-            <xpath expr="//field[@name='contact_partner_id']" position="after">
-                <field name="use_leads"/>
-                <field name="lead_name"/>
-            </xpath>
+<!--            <xpath expr="//field[@name='contact_partner_id']" position="after">-->
+<!--                <field name="use_leads"/>-->
+<!--                <field name="lead_name"/>-->
+<!--            </xpath>-->
             <xpath expr="//group/group" position="after">
                 <group>
                     <field name="direction"/>

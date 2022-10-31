@@ -73,6 +73,7 @@
                             <field name="datas_fname" invisible="1" attrs="{'invisible':[('type','=','url')]}" class="oe_inline oe_right"/>
                             <field name="url" widget="url" attrs="{'invisible':[('type','=','binary')]}"/>
                             <field name="mimetype" groups="base.group_no_one"/>
+<!--                            <field name="attachment_path_complete" readonly="1" force_save="1" groups="base.group_no_one"/>-->
                         </group>
                         <group>
                             <field name="partner_id"/>

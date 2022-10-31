@@ -4,7 +4,6 @@
 import logging
 import os
 import shutil
-import nextcloud_client
 
 from odoo import api, fields, models, tools, SUPERUSER_ID, _
 from odoo.addons.queue_job.job import job
@@ -17,13 +16,13 @@ class IrAttachment(models.Model):
 
     @api.multi
     @job
-    def _file_copy_write_nextcloud(self, fname, full_file_name):
+    def _file_copy_write_rconfig(self, fname, full_file_name):
         full_file_url = False
         for attachment in self:
             full_file_name = os.path.join(full_file_name, fname)
             dir_name = os.path.dirname(full_file_name)
 
-            if attachment.company_id.use_davfs2:
+            if attachment.company_id.use_rmount:
                 if not os.path.isdir(dir_name):
                     with tools.ignore(OSError):
                         os.makedirs(dir_name)
@@ -50,7 +49,7 @@ class IrAttachment(models.Model):
 
     @api.model
     def _file_write(self, value, checksum):
-        full_file_name = self._context.get('attachment_nextcloud_path_complete', False)
+        full_file_name = self._context.get('attachment_rclone_path_complete', False)
         if full_file_name:
             full_file_name = os.path.join(self.env.user.company_id.nextcloud_basic_root, full_file_name)
             fname = super(IrAttachment, self)._file_write()

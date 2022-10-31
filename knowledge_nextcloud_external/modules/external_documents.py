@@ -18,28 +18,10 @@ class ExternalDocuments(models.Model):
 
     @api.model
     def create(self, vals):
-        if 'attachment_journal_id' in vals:
-            res = self.new(vals)
-            attachment_journal_id = self.env['ir.attachment.journal'].browse(vals['attachment_journal_id'])
-            name_formal = ''
-            root_name_formal = ''
-            try:
-                name_formal = safe_eval(attachment_journal_id.attachment_path,
-                                        {'object': res, 'time': time})
-                _logger.info("LEGAL NAME %s" % name_formal)
-            except ValueError:
-                _logger.info("LEGAL NAME ERROR %s" % ValueError)
-                name_formal = ''
-            try:
-                root_name_formal = safe_eval(attachment_journal_id.attachment_root_path,
-                                        {'object': res, 'time': time})
-                _logger.info("LEGAL NAME %s" % root_name_formal)
-            except ValueError:
-                _logger.info("LEGAL NAME ERROR %s" % ValueError)
-                root_name_formal = ''
-            if name_formal:
-                name_formal = os.path.join(root_name_formal, name_formal, vals['datas_fname'])
-                return super(ExternalDocuments, self).\
-                    with_context(dict(self._context, attachment_nextcloud_path_complete=name_formal))\
-                    .create(vals)
+        _logger.info("NEW DOCUMENT %s" % vals)
+        if 'attachment_path_complete' in vals:
+            return super(ExternalDocuments, self).\
+                with_context(dict(self._context, attachment_nextcloud_path_complete=vals['attachment_path_complete'])).\
+                create(vals)
         return super(ExternalDocuments, self).create(vals)
+

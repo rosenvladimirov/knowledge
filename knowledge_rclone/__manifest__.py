@@ -2,20 +2,20 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 {
-    'name': 'Knowledge Nextcloud External',
+    'name': 'Knowledge Rclone',
     'summary': """
-        Clue between external documentation and nextcloud module""",
+        Add suppert for rclone""",
     'version': '11.0.1.0.0',
     'license': 'AGPL-3',
     'author': 'Rosen Vladimirov, BioPrint Ltd.,Odoo Community Association (OCA)',
     'website': 'https://github.com/rosenvladimirov/knowledge',
     'depends': [
-        'knowledge_account_documents',
-        'knowledge_external_attachment',
-        'knowledge_extetent_account_documents',
-        'knowledge_nextcloud',
+        'base',
+        'knowledge',
+        'external_documents',
     ],
     'data': [
+        'views/res_config.xml',
     ],
     'demo': [
     ],

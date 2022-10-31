@@ -12,6 +12,7 @@
     'depends': [
         'base',
         'knowledge',
+        'queue_job',
     ],
     'external_dependencies': {
         'python': {'nextcloud_client'},

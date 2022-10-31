@@ -1,6 +1,7 @@
 # coding: utf-8
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 import base64
+import os
 import time
 
 from odoo import api, fields, models, tools, _
@@ -32,17 +33,19 @@ class ExternalDocuments(models.Model):
         return [(r.object, r.name) for r in link_obj.search([('object', 'in', ['sale.order', 'purchase.order',
                                                                                'stock.picking', 'account.invoice',
                                                                                'account.bank.statement',
-                                                                               'crm.lead'])])]
+                                                                               ])])]
+                                                                               # 'crm.lead'])])]
 
     attachment_journal_id = fields.Many2one('ir.attachment.journal', string='Attachment Journal', required=True,
                                             ondelete='cascade', default=_get_default_attachment_journal_id)
     object_id = fields.Reference(string='Reference object', selection=_links_get, )
-    use_leads = fields.Boolean('Lead')
-    lead_name = fields.Char('Lead name')
+    # use_leads = fields.Boolean('Lead')
+    # lead_name = fields.Char('Lead name')
 
     @api.model
     def create(self, vals):
-        lead_id = False
+        # lead_id = False
+        attachment_journal_id = False
         if 'attachment_journal_id' not in vals:
             if self._context.get('attachment_journal'):
                 attachment_journal_id = self.env['ir.attachment.journal'].browse(self._context['attachment_journal'])
@@ -66,13 +69,13 @@ class ExternalDocuments(models.Model):
             else:
                 vals['ref'] = self.env['ir.sequence'].next_by_code('ir.attachment.documents') or _('New')
 
-        if vals.get('use_leads') and vals.get('partner_id'):
-            # partner = self.env['res.partner'].browse(vals['partner_id'])
-            lead_id = self.env['crm.lead'].create({
-                'name': vals.get('lead_name') or vals['name'],
-                'partner_id': vals['partner_id']
-            })
-            vals['object_id'] = "%s,%s" % ('crm.lead', lead_id.id)
+        # if vals.get('use_leads') and vals.get('partner_id'):
+        #     # partner = self.env['res.partner'].browse(vals['partner_id'])
+        #     lead_id = self.env['crm.lead'].create({
+        #         'name': vals.get('lead_name') or vals['name'],
+        #         'partner_id': vals['partner_id']
+        #     })
+        #     vals['object_id'] = "%s,%s" % ('crm.lead', lead_id.id)
 
         # force attach to partner
         if not self._context.get('block_res') and vals.get('partner_id') and not vals.get('res_model') and not vals.get('res_id'):
@@ -82,19 +85,39 @@ class ExternalDocuments(models.Model):
             attachment = self.env['ir.attachment'].browse(vals['ir_attachment_id'])
             if attachment:
                 vals['object_id'] = "%s,%s" % (attachment.res_model, attachment.res_id)
+
+        if attachment_journal_id:
+            res = self.new(vals)
+            try:
+                name_formal = safe_eval(attachment_journal_id.attachment_path,
+                                        {'object': res, 'time': time})
+                _logger.info("LEGAL NAME %s" % name_formal)
+            except ValueError:
+                _logger.info("LEGAL NAME ERROR %s" % ValueError)
+                name_formal = vals.get('name')
+            try:
+                root_name_formal = safe_eval(attachment_journal_id.attachment_root_path,
+                                             {'object': res, 'time': time})
+                _logger.info("LEGAL NAME %s" % root_name_formal)
+            except ValueError:
+                _logger.info("LEGAL NAME ERROR %s" % ValueError)
+                root_name_formal = ''
+            if root_name_formal:
+                name_formal = os.path.join(root_name_formal, name_formal, vals['datas_fname'])
+                vals['attachment_path_complete'] = name_formal
         # _logger.info("EXTERNAL DOCUMENTS %s" % vals)
-        res = super(ExternalDocuments, self).create(vals)
-        if lead_id:
-            lead_id.message_post_with_view(
-                'mail.message_origin_link',
-                values={'self': res, 'origin': res},
-                subtype_id=self.env.ref('mail.mt_note').id)
-        return res
+        # res = super(ExternalDocuments, self).create(vals)
+        # if lead_id:
+        #     lead_id.message_post_with_view(
+        #         'mail.message_origin_link',
+        #         values={'self': res, 'origin': res},
+        #         subtype_id=self.env.ref('mail.mt_note').id)
+        return super(ExternalDocuments, self).create(vals)
 
     @api.multi
     def write(self, vals):
         for record in self:
-            lead_id = False
+            # lead_id = False
             if 'attachment_journal_id' not in vals and not record.attachment_journal_id:
                 attachment_journal_id = self.env['ir.attachment.journal'].search([('company_id', '=', record.company_id.id),
                                                                                   ('journal_type', '=', 'external')],
@@ -104,15 +127,15 @@ class ExternalDocuments(models.Model):
                 else:
                     raise UserWarning("I can't find a journal of accounting documents. Probably deleted from the "
                                       "system...")
-            if vals.get('use_leads') and (vals.get('partner_id') or record.partner_id):
-                # partner = self.env['res.partner'].browse(vals['partner_id'])
-                name = (vals.get('lead_name') or record.lead_name) or (vals.get('name') or record.name)
-                partner_id = vals.get('partner_id') or record.partner_id.id
-                lead_id = self.env['crm.lead'].create({
-                    'name': name,
-                    'partner_id': partner_id,
-                })
-                vals['object_id'] = "%s,%s" % ('crm.lead', lead_id.id)
+            # if vals.get('use_leads') and (vals.get('partner_id') or record.partner_id):
+            #     # partner = self.env['res.partner'].browse(vals['partner_id'])
+            #     name = (vals.get('lead_name') or record.lead_name) or (vals.get('name') or record.name)
+            #     partner_id = vals.get('partner_id') or record.partner_id.id
+            #     lead_id = self.env['crm.lead'].create({
+            #         'name': name,
+            #         'partner_id': partner_id,
+            #     })
+            #     vals['object_id'] = "%s,%s" % ('crm.lead', lead_id.id)
         if vals.get('ref', _('New')) == _('New') and 'attachment_journal_id' in vals:
             if 'company_id' in vals:
                 vals['ref'] = self.env['ir.sequence'].with_context(
@@ -122,11 +145,11 @@ class ExternalDocuments(models.Model):
         # force attach to partner
         if not self._context.get('block_res') and vals.get('partner_id') and (not vals.get('res_model') or record.res_model) and (not vals.get('res_id') or record.res_id):
             vals['res_model'], vals['res_id'] = ('res.partner', vals['partner_id'])
-        if lead_id:
-            lead_id.message_post_with_view(
-                'mail.message_origin_link',
-                values={'self': record, 'origin': record},
-                subtype_id=self.env.ref('mail.mt_note').id)
+        # if lead_id:
+        #     lead_id.message_post_with_view(
+        #         'mail.message_origin_link',
+        #         values={'self': record, 'origin': record},
+        #         subtype_id=self.env.ref('mail.mt_note').id)
         return super(ExternalDocuments, self).write(vals)
 
 

@@ -12,7 +12,7 @@
     "depends": [
         "knowledge",
         "external_documents",
-        "crm",
+        # "crm",
     ],
     "data": [
         "data/res_request_link.xml",

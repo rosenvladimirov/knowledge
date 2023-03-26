@@ -6,40 +6,30 @@
         <field name="inherit_id" ref="knowledge.view_knowledge_configuration"/>
         <field name="arch" type="xml">
             <xpath expr="//div[@data-key='knowledge']" position="inside">
-                <h2>Connect with Nextcloud</h2>
+                <h2>Connect with Office 365</h2>
                 <div class="row mt16 o_settings_container" id="nextcloud_setting">
                     <div class="col-xs-6 col-md-6 o_setting_box">
-                        <div class="o_setting_left_pane">
-                            <field name="use_davfs2"/>
-                        </div>
+                        <div class="o_setting_left_pane"/>
                         <div class="o_setting_right_pane">
-                            <label for="use_davfs2"/>
+                            <label for="oauth_provider_id"/>
+                            <field name="oauth_provider_id"/>
                         </div>
                     </div>
                     <div class="col-xs-6 col-md-6 o_setting_box">
                         <div class="o_setting_left_pane"/>
                         <div class="o_setting_right_pane">
-                            <label for="nextcloud_basic_root"/>
-                            <field name="nextcloud_basic_root"/>
-                        </div>
-                    </div>
-                    <div class="col-xs-6 col-md-6 o_setting_box" attrs="{'invisible': [('use_davfs2','=',True)]}">
-                        <div class="o_setting_left_pane"/>
-                        <div class="o_setting_right_pane">
-                            <div class="text-muted">
-                                Fill data for shared user and password and url to connect with nextcloud server
+                            <div>
+                                <label for="o365_user"/>
+                                <field name="o365_user"/>
                             </div>
-                            <label for="nextcloud_url"/>
-                            <field name="nextcloud_url" widget="url"/>
-                        </div>
-                    </div>
-                    <div class="col-xs-6 col-md-6 o_setting_box" attrs="{'invisible': [('use_davfs2','=',True)]}">
-                        <div class="o_setting_left_pane"/>
-                        <div class="o_setting_right_pane">
-                            <label for="nextcloud_user"/>
-                            <field name="nextcloud_user"/>
-                            <label for="nextcloud_password"/>
-                            <field name="nextcloud_password" password="True"/>
+                            <div>
+                                <label for="o365_password"/>
+                                <field name="o365_password"/>
+                            </div>
+                            <div>
+                                <label for="o365_drive_id"/>
+                                <field name="o365_drive_id"/>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -17,6 +17,9 @@ _logger = logging.getLogger(__name__)
 class ExternalDocuments(models.Model):
     _inherit = "external.documents"
 
+    attachment_root_path = fields.Char('Root path')
+    attachment_path = fields.Char('Path')
+
     def _get_default_attachment_journal_id(self):
         if self._context.get('default_attachment_journal_id'):
             return self._context['default_attachment_journal_id']
@@ -69,14 +72,6 @@ class ExternalDocuments(models.Model):
             else:
                 vals['ref'] = self.env['ir.sequence'].next_by_code('ir.attachment.documents') or _('New')
 
-        # if vals.get('use_leads') and vals.get('partner_id'):
-        #     # partner = self.env['res.partner'].browse(vals['partner_id'])
-        #     lead_id = self.env['crm.lead'].create({
-        #         'name': vals.get('lead_name') or vals['name'],
-        #         'partner_id': vals['partner_id']
-        #     })
-        #     vals['object_id'] = "%s,%s" % ('crm.lead', lead_id.id)
-
         # force attach to partner
         if not self._context.get('block_res') and vals.get('partner_id') and not vals.get('res_model') and not vals.get('res_id'):
             vals['res_model'], vals['res_id'] = ('res.partner', vals['partner_id'])
@@ -88,30 +83,32 @@ class ExternalDocuments(models.Model):
 
         if attachment_journal_id:
             res = self.new(vals)
-            try:
-                name_formal = safe_eval(attachment_journal_id.attachment_path,
-                                        {'object': res, 'time': time})
-                _logger.info("LEGAL NAME %s" % name_formal)
-            except ValueError:
-                _logger.info("LEGAL NAME ERROR %s" % ValueError)
-                name_formal = vals.get('name')
-            try:
-                root_name_formal = safe_eval(attachment_journal_id.attachment_root_path,
-                                             {'object': res, 'time': time})
-                _logger.info("LEGAL NAME %s" % root_name_formal)
-            except ValueError:
-                _logger.info("LEGAL NAME ERROR %s" % ValueError)
-                root_name_formal = ''
+            name_formal = ''
+            root_name_formal = ''
+            if attachment_journal_id.attachment_path:
+                try:
+                    name_formal = safe_eval(attachment_journal_id.attachment_path, {'object': res, 'time': time})
+                    _logger.info("LEGAL NAME %s" % name_formal)
+                except UserError as error:
+                    _logger.info("LEGAL NAME ERROR %s" % error.name)
+                    _logger.debug("Traceback:", exc_info=True)
+                    name_formal = vals.get('name')
+
+            if attachment_journal_id.attachment_root_path:
+                try:
+                    root_name_formal = safe_eval(attachment_journal_id.attachment_root_path,
+                                                 {'object': res, 'time': time})
+                    _logger.info("LEGAL NAME %s" % root_name_formal)
+                except UserError as error:
+                    _logger.info("LEGAL NAME ERROR %s" % error.name)
+                    _logger.debug("Traceback:", exc_info=True)
+                    root_name_formal = ''
+
             if root_name_formal:
-                name_formal = os.path.join(root_name_formal, name_formal, vals['datas_fname'])
-                vals['attachment_path_complete'] = name_formal
-        # _logger.info("EXTERNAL DOCUMENTS %s" % vals)
-        # res = super(ExternalDocuments, self).create(vals)
-        # if lead_id:
-        #     lead_id.message_post_with_view(
-        #         'mail.message_origin_link',
-        #         values={'self': res, 'origin': res},
-        #         subtype_id=self.env.ref('mail.mt_note').id)
+                vals['attachment_root_path'] = root_name_formal
+                vals['attachment_path'] = name_formal
+                vals['attachment_path_complete'] = os.path.join(root_name_formal, name_formal)
+
         return super(ExternalDocuments, self).create(vals)
 
     @api.multi

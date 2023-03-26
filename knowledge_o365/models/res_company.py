@@ -7,9 +7,7 @@ from odoo import fields, models
 class ResCompany(models.Model):
     _inherit = 'res.company'
 
-    use_rmount = fields.Boolean('Use mount with rclone')
-    rclone_url = fields.Char('URL')
-    rclone_port = fields.Integer('Port')
-    rclone_user = fields.Char('User')
-    rclone_password = fields.Char('Password')
-    rclone_basic_root = fields.Char('Root dir')
+    oauth_provider_id = fields.Many2one('auth.oauth.provider', string='OAuth Provider')
+    o365_drive_id = fields.Char('drive-id')
+    o365_user = fields.Char('o365 User')
+    o365_password = fields.Char('o365 Password')

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="external_document_action_all" model="ir.actions.act_window">
+            <field name="name">External documents</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">external.documents</field>
+            <field name="view_type">form</field>
+<!--            <field name="search_view_id" ref=""/>-->
+            <field name="view_id" ref="external_documents.view_external_documents_tree"/>
+        </record>
+
+        <record id="external_folders_search_view" model="ir.ui.view">
+            <field name="name">external.folders.search</field>
+            <field name="model">external.folders</field>
+            <field name="arch" type="xml">
+                <search string="External Folders">
+                    <field name="name" string="External Folders"/>
+                    <field name="parent_id"/>
+                </search>
+            </field>
+        </record>
+        <record id="external_folders_form_view" model="ir.ui.view">
+            <field name="name">external.folders.form</field>
+            <field name="model">external.folders</field>
+            <field name="arch" type="xml">
+                <form class="oe_form_configuration">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button"
+                                name="%(external_document_action_all)d"
+                                icon="fa-th-list"
+                                type="action"
+                                context="{'search_default_categ_id': active_id}">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value"><field name="folder_count"/></span>
+                                    <span class="o_stat_text"> Folders</span>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" string="Folder name" class="oe_edit_only"/>
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group name="first" col="2">
+                            <field name="parent_id" class="oe_inline"/>
+                            <field name="object_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="external_folders_list_view" model="ir.ui.view">
+            <field name="name">external.folders.list</field>
+            <field name="model">external.folders</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <tree string="External Folders">
+                    <field name="display_name"/>
+                </tree>
+            </field>
+        </record>
+        <record id="external_folders_action_form" model="ir.actions.act_window">
+            <field name="name">Folder Categories</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">external.folders</field>
+            <field name="view_type">form</field>
+            <field name="search_view_id" ref="knowledge_o365.external_folders_search_view"/>
+            <field name="view_id" ref="knowledge_o365.external_folders_list_view"/>
+        </record>
+
+        <menuitem
+            action="knowledge_o365.external_folders_action_form" id="menu_external_folders_action"
+            parent="knowledge.menu_document_configuration" sequence="99" />
+    </data>
+</odoo>

@@ -53,8 +53,8 @@ class IrAttachment(models.Model):
         full_file_name = self._context.get('attachment_nextcloud_path_complete', False)
         if full_file_name:
             full_file_name = os.path.join(self.env.user.company_id.nextcloud_basic_root, full_file_name)
-            fname = super(IrAttachment, self)._file_write()
-            dir_name, file_name, full_file_url = self._file_copy_write_nextcloud(fname, full_file_name)
+            fname = super(IrAttachment, self)._file_write(value, checksum)
+            dir_name, file_name, full_file_url = self.with_delay()._file_copy_write_nextcloud(fname, full_file_name)
             if full_file_url:
                 self._file_delete(fname)
                 self.sudo().write({

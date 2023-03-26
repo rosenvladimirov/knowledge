@@ -3,7 +3,6 @@
 import io
 import os
 import base64
-import shutil
 
 from pdfminer.converter import TextConverter
 from pdfminer.layout import LAParams
@@ -14,7 +13,6 @@ from pdfminer.pdfparser import PDFParser
 
 from odoo import fields, models, tools, api, _
 from odoo.addons.document.models.ir_attachment import IrAttachment as irattachment
-from odoo.addons.queue_job.job import job
 
 import logging
 
@@ -112,54 +110,6 @@ class IrAttachment(models.Model):
                 with open(path, "rb") as image_file:
                     record.thumbnail_small = base64.b64encode(image_file.read())
 
-    @api.multi
-    @job
-    def _file_copy_write(self, fname):
-        full_file_name = self._context['attachment_path_complete']
-        for attachment in self:
-            dir_name = os.path.dirname(full_file_name)
-            if not os.path.isdir(dir_name):
-                with tools.ignore(OSError):
-                    os.makedirs(dir_name)
-            try:
-                shutil.copy(fname, full_file_name)
-            except IOError:
-                _logger.info("_file_copy_write writing %s", full_file_name, exc_info=True)
-        return os.path.dirname(full_file_name), os.path.basename(full_file_name)
-
-    @api.model
-    def _file_write(self, value, checksum):
-        if self._context.get('attachment_path_complete') and self._storage() == 'file':
-            fname = super(IrAttachment, self)._file_write(value, checksum)
-            dir_name, file_name = self.with_delay()._file_copy_write(fname)
-            if dir_name:
-                self.sudo().write({
-                    'attachment_path_complete': dir_name,
-                })
-            return fname
-        return super(IrAttachment, self)._file_write(value, checksum)
-
-    @api.model
-    def _file_read(self, fname, bin_size=False):
-        r = ''
-        if self._context.get('attachment_path_complete') and self._storage() == 'file':
-            full_path = self._context['attachment_path_complete']
-            try:
-                r = base64.b64encode(open(full_path, 'rb').read())
-            except (IOError, OSError):
-                _logger.info("_read_file reading %s", full_path, exc_info=True)
-            return r
-        return super(IrAttachment, self)._file_read(fname, bin_size=bin_size)
-
-    @api.model
-    def _file_delete(self, fname):
-        if self._context.get('attachment_path_complete') and self._storage() == 'file':
-            try:
-                os.unlink(self._context['attachment_path_complete'])
-            except (OSError, IOError):
-                _logger.info("_file_gc could not unlink %s", self._full_path(fname), exc_info=True)
-        super(IrAttachment, self)._file_delete(fname)
-
     @api.model
     def create(self, vals):
         if 'name' in vals and 'ref' not in vals:
@@ -168,7 +118,7 @@ class IrAttachment(models.Model):
 
     def _index_pdf(self, bin_data):
         buf = u''
-        _logger.info("PDF INDEX %s" % bin_data.startswith(b'%PDF-'))
+        # _logger.info("PDF INDEX %s" % bin_data.startswith(b'%PDF-'))
         if bin_data.startswith(b'%PDF-'):
             f = io.BytesIO(bin_data)
             output_string = io.StringIO()

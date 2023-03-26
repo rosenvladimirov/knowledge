@@ -1,1 +1,1 @@
-from . import mrp_workorder_auto_process
+from . import external_folder_collect

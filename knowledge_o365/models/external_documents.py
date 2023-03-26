@@ -6,7 +6,7 @@ import os
 import shutil
 import tempfile
 
-from odoo import api, fields, models, tools, SUPERUSER_ID, _
+from odoo import api, fields, models, _
 from odoo.addons.queue_job.job import job
 
 _logger = logging.getLogger(__name__)
@@ -17,8 +17,9 @@ SCOPES = ['basic', 'onedrive_all', 'sharepoint_dl']
 class ExternalDocuments(models.Model):
     _inherit = 'external.documents'
 
-    o365_folder = fields.Selection(string='O365 Folder',
-                                   selection=lambda self: self._selection_type_assets())
+    # o365_folder = fields.Selection(string='O365 Folder',
+    #                                selection=lambda self: self._get_folders())
+    o365_folder_id = fields.Many2one('external.folders', 'External folder')
     o365_item_id = fields.Char('o365 Item ID')
     o365_checklist_item_id = fields.Char('o365 Checklist Item ID')
 
@@ -31,7 +32,7 @@ class ExternalDocuments(models.Model):
                     _get_provider(user=attachment.company_id.o365_user, password=attachment.company_id.o365_password,
                                   scopes=SCOPES)
                 storage = o365_account.storage()
-                drive = storage.get_default_drive(attachment.company_id.drive_id)
+                drive = storage.get_default_drive(attachment.company_id.o365_drive_id)
                 if attachment.o365_folder:
                     folder = drive.get_item(attachment.o365_folder)
                 else:
@@ -58,12 +59,12 @@ class ExternalDocuments(models.Model):
 
     @api.model
     def _file_write(self, value, checksum):
-        dir_name = self._context.get('attachment_o365_path_complete', False)
-        if self.company_id.oauth_provider_id:
-            fname = super(IrAttachment, self)._file_write(value, checksum)
-            self.with_delay()._file_copy_write_o365(fname, dir_name)
+        # dir_name = self._context.get('attachment_o365_path_complete', False)
+        if self.company_id.oauth_provider_id and (self.attachment_path or self.o365_folder):
+            fname = super(ExternalDocuments, self)._file_write(value, checksum)
+            self.with_delay()._file_copy_write_o365(fname, self.attachment_path)
             return fname
-        return super(IrAttachment, self)._file_write(value, checksum)
+        return super(ExternalDocuments, self)._file_write(value, checksum)
 
     @api.model
     def _file_read(self, fname, bin_size=False):
@@ -74,7 +75,7 @@ class ExternalDocuments(models.Model):
                     _get_provider(user=self.company_id.o365_user, password=self.company_id.o365_password,
                                   scopes=SCOPES)
                 storage = o365_account.storage()
-                drive = storage.get_default_drive(self.company_id.drive_id)
+                drive = storage.get_default_drive(self.company_id.o365_drive_id)
                 item = drive.get_item(self.o365_item_id)
                 with tempfile.TemporaryDirectory() as to_folder:
                     r = item.download(to_path=to_folder)
@@ -83,7 +84,7 @@ class ExternalDocuments(models.Model):
             except Exception as error:
                 _logger.error(u"Office 365 can't be download content file. Reason: {}".format(error))
             return r
-        return super(IrAttachment, self)._file_read(fname, bin_size=bin_size)
+        return super(ExternalDocuments, self)._file_read(fname, bin_size=bin_size)
 
     @api.model
     def _file_delete(self, fname):
@@ -93,23 +94,10 @@ class ExternalDocuments(models.Model):
                     _get_provider(user=self.company_id.o365_user, password=self.company_id.o365_password,
                                   scopes=SCOPES)
                 storage = o365_account.storage()
-                drive = storage.get_default_drive(self.company_id.drive_id)
+                drive = storage.get_default_drive(self.company_id.o365_drive_id)
                 item = drive.get_item(self.o365_item_id)
                 if not item.delete():
                     _logger.error(u"Office 365 can't be delete content file: {}".format(item.name))
             except Exception as error:
                 _logger.error(u"Office 365 can't be delete content file. Reason: {}".format(error))
-        super(IrAttachment, self)._file_delete(fname)
-
-    @api.model
-    def _get_folders(self):
-        o365_account = self.company_id.oauth_provider_id. \
-            _get_provider(user=self.company_id.o365_user, password=self.company_id.o365_password, scopes=SCOPES)
-        res = []
-        storage = o365_account.storage()
-        drive = storage.get_default_drive(self.company_id.drive_id)
-        root_folder = drive.get_root_folder()
-        for item in root_folder.get_items():
-            if item.is_folder():
-                res.append((item.object_id, item.name))
-        return res
+        super(ExternalDocuments, self)._file_delete(fname)
